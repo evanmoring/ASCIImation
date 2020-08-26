@@ -1,35 +1,37 @@
-
-var textList =[]
 const start = 36;
 const end = 93;
 const step = 4;
+const stepQuantity = Math.floor((end-start)/step);
+var textList =new Array(stepQuantity)
 var animationCheck = true;
-var newNum;
+var newNumber = 0;
 const animationFolder = 'demo/';
 const msBetweenFrames = 200;
+var loadCounter = 0;
 
-loadCounter = start
-function load(i){
-    console.log(i)
-    let stringCounter = i.toString();
+function load(){
+    for(let i=0;i<stepQuantity;i++){
+    console.log('i '+i)
+    currentFrame = (start+i*step)
+    let stringCounter = currentFrame.toString();
     while (3 > stringCounter.length){
         stringCounter = '0'+stringCounter
     }
     textFile = stringCounter+'.txt';
     var xhr=new XMLHttpRequest;
     xhr.open('GET',animationFolder+textFile);
+    xhr.frameNumber = i
     xhr.onload = addTxt
-    xhr.send()  
+    xhr.send() 
+    } 
+
 }
 function addTxt(){
-    textList.push(this.response);
-    if(textList.length>=((end-start)/4)){
-        playFrame(0)
-        
-        }
-    else{
-        loadCounter += step;
-        load(loadCounter);
+
+    textList[this.frameNumber]=(this.response);
+    loadCounter +=1
+    if (loadCounter == stepQuantity) {
+        playFrame(newNumber)
     }
     }
 
@@ -53,7 +55,7 @@ function animationPause(){
     }
     else{
         animationCheck=true;
-        playFrame(newNum)
+        playFrame(newNumber)
         document.getElementById('pauseButton').value = 'Pause'
     }
 }
